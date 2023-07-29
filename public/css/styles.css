@@ -1,0 +1,46 @@
+/* Stylesheet */
+body {
+  font-family: "Roboto", sans-serif;
+}
+h1 {
+  font-size: 22px;
+  font-weight: bold;
+}
+.post-title {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+.post-title > label {
+  font-weight: bold;
+  font-size: 16px;
+}
+.post-title > input[type="text"] {
+  padding: 10px;
+  margin-top: 5px;
+  border: 0px;
+  border-bottom: 2px solid #d4d4d4;
+}
+.post-content {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+.post-content > label {
+  font-weight: bold;
+  font-size: 16px;
+}
+.post-content > textarea {
+  padding: 10px;
+  margin-top: 5px;
+  border: 0px;
+  border: 2px solid #d4d4d4;
+}
+button[type="submit"] {
+  background-color: #2196f3;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
