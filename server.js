@@ -5,8 +5,8 @@ const ejs = require("ejs");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bodyParser = require("body-parser");
-const { Post } = require(__dirname + "/postSchema.js");
-const { User } = require(__dirname + "/userSchema.js");
+const { Post } = require(__dirname + "/schemas/postSchema.js");
+const { User } = require(__dirname + "/schemas/userSchema.js");
 const port = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
@@ -115,7 +115,7 @@ app.post("/compose", function (req, res) {
     .save()
     .then(function (data) {
       if (data) {
-        res.redirect("/");
+        res.redirect("/home");
       } else {
         res.redirect("/compose");
       }
@@ -147,7 +147,7 @@ app.get("/post/edit/:postID", ensureAuthenticated, function (req, res) {
     });
 });
 
-app.post('/post/edit/:postID', function(req, res){
+app.post("/post/edit/:postID", function(req, res){
   const editPostID = req.params.postID;
   const updatePost = {
     title: req.body.postTitle,
@@ -157,6 +157,16 @@ app.post('/post/edit/:postID', function(req, res){
     res.redirect("/home")
   }).catch(function (error) {
     console.log(error);
+  });
+});
+
+app.post("/post/delete/:postID", ensureAuthenticated, function(req, res){
+  Post.findByIdAndRemove({_id: req.params.postID}).then(function(err){
+    if(err){
+      res.redirect("/home")
+    } else {
+      res.redirect("/home")
+    }
   });
 });
 
