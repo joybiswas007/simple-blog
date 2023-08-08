@@ -1,0 +1,46 @@
+<%- include('partials/header'); %>
+
+<h1>Register</h1>
+<div class="register">
+  <form action="/register" method="post">
+    <div>
+      <label for="username">Username</label>
+      <input
+        type="text"
+        name="username"
+        placeholder="Enter username"
+        required
+      />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        placeholder="Enter password"
+        required
+      />
+    </div>
+    <div>
+      <label for="password2">Re-type password</label>
+      <input
+        type="password"
+        name="password2"
+        placeholder="Re-type password"
+        required
+      />
+    </div>
+    <div>
+      <label for="email">E-mail</label>
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter email address"
+        required
+      />
+    </div>
+    <button type="submit" class="btn">Register</button>
+  </form>
+</div>
+
+<%- include('partials/footer'); %>

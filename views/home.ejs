@@ -1,10 +1,16 @@
 <%- include('partials/header'); %>
 
+<div class="home-nav">
+    <a href="/home">Home</a>
+    <a href="/logout">Logout</a>
+    <a href="/compose">Compose</a>
+  </div>
+
 <% posts.forEach(function(post){ %>
 <h1><%=post.title %></h1>
 <p><a href="/posts/<%=post.id%>">
     <%=post.content%>
 </a></p>
+<a href="/post/edit/<%= post._id %>" class="edit-button">Edit</a>
 <% }) %> 
-
 <%- include('partials/footer'); %>
