@@ -7,6 +7,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const bodyParser = require("body-parser");
 const { Post } = require(__dirname + "/schemas/postSchema.js");
 const { User } = require(__dirname + "/schemas/userSchema.js");
+const { Comment } = require(__dirname + "/schemas/commentSchema.js");
 const port = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
@@ -133,9 +134,9 @@ app.post("/compose", function (req, res) {
 
 app.get("/posts/:postID", function (req, res) {
   const requestedPostID = req.params.postID;
-  Post.findOne({ _id: requestedPostID })
+  Post.findOne({ _id: requestedPostID }).populate("comments")
     .then(function (post) {
-      res.render("post", { title: post.title, content: post.content });
+      res.render("post", { title: post.title, content: post.content, comments: post.comments, post: post });
     })
     .catch(function (err) {
       console.log(err);
@@ -196,6 +197,34 @@ app.get("/user/details/:userID", ensureAuthenticated, function (req, res) {
       res.status(404).send(err);
     });
 });
+
+app.post("/add/comment", ensureAuthenticated, async function(req, res){
+  const { postId, content } = req.body;
+  const comment = new Comment({
+    author: req.user.username,
+    content,
+    postId,
+  });
+  // newComment.save().then(function(comment){
+  //   if(comment){
+  //     res.redirect("/posts/" + postId);
+  //   } else {
+  //     console.log(err);
+  //   }
+  // });
+
+  try {
+    const savedComment = await comment.save();
+    const post = await Post.findById(postId);
+    post.comments.push(savedComment._id);
+    await post.save();
+    res.redirect("/posts/" + postId);
+  } catch (error) {
+    console.log(error);
+    res.redirect("/posts/" + postId);
+  }
+});
+
 
 app.listen(port, function () {
   console.log("Server running on port " + port);

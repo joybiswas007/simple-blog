@@ -2,5 +2,23 @@
 
 <h1><%=title%></h1>
 <p><%=content%></p>
+
+<h2>Comments</h2>
+<div id="comments">
+  <% comments.forEach(function(comment) { %>
+    <div class="comment">
+      <h3><%=comment.author%></h3>
+      <p><%=comment.content%></p>
+    </div>
+  <% }); %>
+</div>
+
+<h2>Add a comment</h2>
+<form action="/add/comment" method="POST">
+  <input type="hidden" name="postId" value="<%=post._id%>">
+  <textarea name="content" placeholder="Your comment"></textarea>
+  <button type="submit">Submit</button>
+</form>
+
 <a href="/home">Go back</a>
 <%- include('partials/footer'); %>
