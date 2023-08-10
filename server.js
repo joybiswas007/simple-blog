@@ -43,40 +43,45 @@ app.post(
 );
 
 app.get("/register", function (req, res) {
-  res.render("register", { title: "Register"});
+  res.render("register", { title: "Register" });
 });
 
 app.post("/register", async function (req, res) {
   try {
     const { username, password, password2, email } = req.body;
     if (password.length < 8 || password.length > 75) {
-      return res.render("register", { title: "Register", error: "Password must be between 8 and 75 characters long" });
+      return res.render("register", {
+        title: "Register",
+        error: "Password must be between 8 and 75 characters long",
+      });
     }
     if (password !== password2) {
-      return res.render("register", { title: "Register", error: "Passwords do not match." });
+      return res.render("register", {
+        title: "Register",
+        error: "Passwords do not match.",
+      });
     }
     const existingUser = await User.findOne({ username: username });
     if (existingUser) {
-      return res.render("register", { title: "Register", error: "Username already exists" });
+      return res.render("register", {
+        title: "Register",
+        error: "Username already exists",
+      });
     }
     const newUser = new User({ username, email });
     await User.register(newUser, password);
     res.redirect("/login");
   } catch (error) {
     console.error(error);
-    res.render("register", { title: "Register", error: "An error occured during registration"});
+    res.render("register", {
+      title: "Register",
+      error: "An error occured during registration",
+    });
   }
 });
 
-//below code doesn't work don't why. It just doesn't. Except for that everything works
-// app.get("/logout", function (req, res) {
-//   req.logOut();
-//   req.logout();
-//   res.redirect("/");
-// });
-
 app.get("/logout", function (req, res) {
-  req.session.destroy(function(err) {
+  req.session.destroy(function (err) {
     if (err) {
       console.log(err);
     } else {
@@ -110,6 +115,7 @@ app.post("/compose", function (req, res) {
   const post = new Post({
     title: req.body.postTitle,
     content: req.body.postContent,
+    user: req.user._id,
   });
   post
     .save()
@@ -147,25 +153,27 @@ app.get("/post/edit/:postID", ensureAuthenticated, function (req, res) {
     });
 });
 
-app.post("/post/edit/:postID", function(req, res){
+app.post("/post/edit/:postID", function (req, res) {
   const editPostID = req.params.postID;
   const updatePost = {
     title: req.body.postTitle,
-    content: req.body.postContent
-  }
-  Post.findOneAndUpdate({_id: editPostID}, updatePost).then(function(){
-    res.redirect("/home")
-  }).catch(function (error) {
-    console.log(error);
-  });
+    content: req.body.postContent,
+  };
+  Post.findOneAndUpdate({ _id: editPostID }, updatePost)
+    .then(function () {
+      res.redirect("/home");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 });
 
-app.post("/post/delete/:postID", ensureAuthenticated, function(req, res){
-  Post.findByIdAndRemove({_id: req.params.postID}).then(function(err){
-    if(err){
-      res.redirect("/home")
+app.post("/post/delete/:postID", ensureAuthenticated, function (req, res) {
+  Post.findByIdAndRemove({ _id: req.params.postID }).then(function (err) {
+    if (err) {
+      res.redirect("/home");
     } else {
-      res.redirect("/home")
+      res.redirect("/home");
     }
   });
 });
