@@ -100,7 +100,7 @@ function ensureAuthenticated(req, res, next) {
 app.get("/home", ensureAuthenticated, function (req, res) {
   Post.find({})
     .then(function (posts) {
-      res.render("home", { title: "Homepage", posts });
+      res.render("home", { title: "Homepage", posts, user: req.user._id });
     })
     .catch(function (err) {
       console.log(err);
@@ -144,8 +144,11 @@ app.get("/posts/:postID", function (req, res) {
 
 app.get("/post/edit/:postID", ensureAuthenticated, function (req, res) {
   const requestedPostID = req.params.postID;
-  Post.findOne({ _id: requestedPostID })
+  Post.findOne({ _id: requestedPostID, user: req.user._id })
     .then(function (post) {
+      if(!post){
+        return res.status(403).send("You are not authorized to edit post!");
+      }
       res.render("edit", { title: "Edit Post", post });
     })
     .catch(function (err) {
@@ -159,8 +162,11 @@ app.post("/post/edit/:postID", function (req, res) {
     title: req.body.postTitle,
     content: req.body.postContent,
   };
-  Post.findOneAndUpdate({ _id: editPostID }, updatePost)
-    .then(function () {
+  Post.findOneAndUpdate({ _id: editPostID, user: req.user._id }, updatePost)
+    .then(function (post) {
+      if(!post){
+        return res.status(403).send("You are not authorized to edit post!");
+      }
       res.redirect("/home");
     })
     .catch(function (error) {
@@ -169,13 +175,26 @@ app.post("/post/edit/:postID", function (req, res) {
 });
 
 app.post("/post/delete/:postID", ensureAuthenticated, function (req, res) {
-  Post.findByIdAndRemove({ _id: req.params.postID }).then(function (err) {
-    if (err) {
-      res.redirect("/home");
-    } else {
-      res.redirect("/home");
+  Post.findOneAndDelete({ _id: req.params.postID, user: req.user._id }).then(function (post) {
+    if (!post) {
+      return res.status(403).send("You are not authorized to delete this post!");
     }
+    res.redirect("/home");
+  }).catch(function(err){
+    console.log(err)
+    res.redirect("/home")
   });
+});
+
+app.get("/user/details/:userID", ensureAuthenticated, function (req, res) {
+  const requestedId = req.params.userID;
+  User.findOne({ _id: requestedId })
+    .then(function (user) {
+      res.render("user", { title: "Profile", user })
+    })
+    .catch(function (err) {
+      res.status(404).send(err);
+    });
 });
 
 app.listen(port, function () {

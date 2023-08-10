@@ -1,0 +1,16 @@
+<%- include('partials/header'); %>
+
+<table>
+  <tr>
+    <th>JOIN Date</th>
+    <th>Username</th>
+    <th>Email</th>
+  </tr>
+  <tr>
+    <td><%= user.createdAt %></td>
+    <td><%= user.username %></td>
+    <td><%= user.email %></td>
+  </tr>
+</table>
+<a href="/home">Go back</a>
+<%- include('partials/footer'); %>
